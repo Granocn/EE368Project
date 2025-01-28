@@ -1,0 +1,25 @@
+body
+{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+#element1
+{
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 90px;
+    alignment: left;
+    width: 25%;
+}
+
+#element2
+{
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 0px;
+    horiz-align: right;
+    width: auto;
+    position: fixed;
+    right: 0;
+    margin-right: 5px;
+}
+
