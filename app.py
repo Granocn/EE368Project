@@ -17,11 +17,18 @@ app = Flask(__name__)
 # )
 # mysql.connector.
 
+# mydb = mysql.connector.connect(
+#   host="128.153.174.210",
+#   user="EE368Project",
+#   password="password123",
+#   database="ee368project"
+# )
+
 mydb = mysql.connector.connect(
-  host="128.153.174.210",
-  user="EE368Project",
-  password="password123",
-  database="ee368project"
+    host="54.172.50.181",
+    user="admin",
+    password="Pawc10mk1???",
+    database="ee368project"
 )
 
 
