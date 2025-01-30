@@ -25,3 +25,15 @@ body
     margin-right: 5px;
 }
 
+#element3
+{
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 90px;
+    alignment: left;
+    /*width: 25%;*/
+}
+#element4
+{
+    color: red;
+}

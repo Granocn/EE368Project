@@ -10,12 +10,22 @@
         <p>Welcome to log-in</p>
         <form method="post">
 
-            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="email" placeholder="Email">
             <input type="password" name="password" placeholder="Password">
             <input type="submit" name="login" value="Log in">
+            <div id="element4">
+                <p>{{incorrect}}</p>
+            </div>
             <input type="submit" name="forgotPass" value="Forgot password">
 
         </form>
+    </div>
+    <div id="element2">
+        <form method="post">
+            <input type="submit" value="Sign up" name="signupPage" >
+            <input type="submit" value="Home" name="homePage" >
+        </form>
+
     </div>
 </body>
 </html>

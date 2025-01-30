@@ -1,20 +1,29 @@
 from operator import truediv
 
 import mysql.connector
-from django.db.models import TextField
+#from django.db.models import TextField
 from flask import Flask, render_template, request, redirect, url_for
 
 # from settings import Username, Password
 
 app = Flask(__name__)
 
+#
+# mydb = mysql.connector.connect(
+#   host="localhost",
+#   user="EE368Project",
+#   password="password123",
+#   database="ee368project"
+# )
+# mysql.connector.
 
 mydb = mysql.connector.connect(
-  host="localhost",
+  host="128.153.174.210",
   user="EE368Project",
   password="password123",
   database="ee368project"
 )
+
 
 cursor = mydb.cursor()
 # query = "SELECT Username, Password, Email FROM Users"
@@ -31,7 +40,6 @@ def main():  # put application's code here
 #             # username = request.form['username']
 #             # password = request.form['password']
 
-
 @app.route('/', methods=["GET", "POST"])
 def button():
     if request.method =="POST":
@@ -39,6 +47,8 @@ def button():
             return render_template("login.html")
         elif request.form.get('signupPage') == "Sign up":
             return render_template("signup.html")
+        elif request.form.get('homePage') == "Home":
+            return render_template("main.html")
         elif request.form.get('signup') == "Sign up":
             username = request.form['username']
             secureQuestion = request.form['secureAnswer']
@@ -60,18 +70,24 @@ def button():
             # return username, email, password
             return render_template('login.html')
         elif request.form.get('login') == "Log in":
-            username = request.form['username']
+            incorrect = ""
             password = request.form['password']
-            cursor.execute("SELECT Username, Password FROM Users WHERE Username = %s AND Password = %s", (username, password))
-            for (Username, Password) in cursor:
-                checkUsername = Username
+            email = request.form['email']
+            checkEmail = ""
+            checkPassword = ""
+            cursor.execute("SELECT Username, Password, Email FROM Users WHERE Email = %s AND Password = %s", (email, password))
+            for (Username, Password, Email) in cursor:
+                username = Username
+                checkEmail = Email
                 checkPassword = Password
-            if( username == checkUsername and password == checkPassword):
+            if( email == checkEmail and password == checkPassword):
                 print("Login successful")
-                return render_template('userInfo.html')
+
+                return render_template('userInfo.html', userVar = username, userEmail = email)
             else:
                 print("Login failed")
-                return render_template('login.html')
+                incorrect = "Incorrect email or password"
+                return render_template('login.html', incorrect = incorrect)
             # return render_template('userInfo.html')
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')

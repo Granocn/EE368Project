@@ -34,8 +34,8 @@ for (Username, Password) in cursor:
 # DATABASES = {
 #     'ee368project': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'university',
-#         'USER': 'USER',
+#         'NAME': 'EE366Project',
+#         'USER': 'EE368Project',
 #         'HOST': '127.0.0.1',
 #         'PORT': 3306,
 #         'PASSWORD': 'Ajnh3nry'
