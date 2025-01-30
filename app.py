@@ -71,7 +71,7 @@ def button():
                 print("Passwords don't match")
                 password = "NULL"
             print(username, email, password, secureQuestion)
-            cursor.execute("INSERT INTO Users (Username, Email, Password, SecureQuestion) VALUES (%s, %s, %s, %s)", (username, email, password, secureQuestion))
+            cursor.execute("INSERT INTO Users (Username, Email, Password, SecurityQuestion) VALUES (%s, %s, %s, %s)", (username, email, password, secureQuestion))
             # cursor.close()
             mydb.commit()
             # return username, email, password
