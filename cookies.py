@@ -16,7 +16,7 @@ Example:
                 else:
                     print("Login failed")
 
-Feel free to make any edits necessary during the meet today. Let me know of any issues!
+Feel free to make any edits necessary during the meet today (1/30). Let me know of any issues!
 - Joe
 
 """
