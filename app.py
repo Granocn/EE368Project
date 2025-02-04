@@ -63,7 +63,6 @@ def button():
         elif request.form.get('signup') == "Sign up":
             firstName = request.form['firstName']
             lastName = request.form['lastName']
-            secureQuestion = request.form['secureAnswer']
             if request.form['email'] == request.form['email2']:
                 email = request.form['email']
             else:
@@ -86,18 +85,20 @@ def button():
             else:
                 print("Passwords don't match")
                 password = "NULL"
-            print(firstName, email, password, secureQuestion, lastName)
-            cursor.execute("INSERT INTO Users (FirstName, Email, Password, SecurityQuestion, LastName) VALUES (%s, %s, %s, %s, %s)", (firstName, email, password, secureQuestion, lastName))
+            print(firstName, email, password, lastName)
+            cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)", (firstName, email, password, lastName))
             # cursor.close()
             mydb.commit()
             # return username, email, password
             return render_template('login.html')
         elif request.form.get('login') == "Log in":
             # incorrect = ""
-            password = request.form['password']
+            password = hashPass(request.form['password'])
+            print(password)
             email = request.form['email']
             checkEmail = ""
             checkPassword = ""
+            firstName = ""
             cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s", (email, password))
             for (FirstName, Password, Email, LastName) in cursor:
                 firstName = FirstName
@@ -106,11 +107,13 @@ def button():
                 lastName = LastName
             if( email == checkEmail and password == checkPassword):
                 print("Login successful")
+
                 # set_session(email, 'FirstName', 'LastName')
                 return render_template('userInfo.html', userVar = firstName + " " + lastName, userEmail = email)
                 # return render_template('userInfo.html', user = get_session())
             else:
                 print("Login failed")
+                print(firstName)
                 incorrect = "Incorrect email or password"
                 return render_template('login.html', incorrect = incorrect)
             # return render_template('userInfo.html')
