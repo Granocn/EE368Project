@@ -1,7 +1,9 @@
 import string
 import hashlib
 
-
+# Purpose: Hash a password using SHA256
+# Pre: The password being hashed
+# Post: Returns the hashed password
 def hashPass(password):
     data_to_hash = password
     hash_object = hashlib.sha256(data_to_hash.encode())
@@ -9,16 +11,16 @@ def hashPass(password):
     return hex_digest
 
 
-
+# Purpose: Verifies the user's password meets the requirements
+# Pre: The password being verified
+# Post: Return an empty string if the password is good, returns
+# an error message otherwise
 def PasswordVerification(password):
     # Set all flags to 0
     l, u, p, d = 0, 0, 0, 0
 
-    # check password length
-    if (len(password) > 60):
-        return "Invalid Password - Password too long!"
-
-    elif (len(password) >= 8):
+    # Check the password minimum length
+    if (len(password) >= 8):
 
         # iterate through each character
         for i in password:
