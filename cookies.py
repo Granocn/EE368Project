@@ -1,26 +1,3 @@
-"""
-Here is a start to the Cookie / Session management for our project. Relatively simple, but have not been able to
-fully test it with the rest of the project. As of right now, this does NOT refer to anything related to the
-MySQL database.
-
-To incorporate with the app.py in 'Master', simply add a 'set_session(username, email, 'FirstName', 'LastName')' after
-a successful login.
-
-Example:
-    if user_data:
-                checkUsername, checkPassword, email = user_data
-                if username == checkUsername and password == checkPassword:
-                    print("Login successful")
-                    set_session(username, email, 'FirstName', 'LastName')        # Example of session setting
-                    return render_template('userInfo.html', user=get_session())  # Display user info using session data
-                else:
-                    print("Login failed")
-
-Feel free to make any edits necessary during the meet today (1/30). Let me know of any issues!
-- Joe
-
-"""
-
 from flask import session
 from datetime import timedelta
 
