@@ -4,6 +4,8 @@ import mysql.connector
 #from django.db.models import TextField
 from flask import Flask, render_template, request, redirect, url_for
 
+from passVer import *
+
 # from settings import Username, Password
 
 app = Flask(__name__)
@@ -67,6 +69,17 @@ def button():
             #             # email = request.fm['email']
             if request.form['password'] == request.form['password2']:
                 password = request.form['password']
+
+                # Determine if the password passes verification
+                passMess = PasswordVerification(password)
+
+                # Check for passing
+                if passMess == "":
+                    password = hashPass(password)
+                # Password did not pass
+                else:
+                    print(passMess)  # Display this to the user
+                    password = "NULL"
             else:
                 print("Passwords don't match")
                 password = "NULL"
