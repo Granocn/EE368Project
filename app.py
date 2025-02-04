@@ -6,6 +6,8 @@ from flask import Flask, render_template, request, redirect, url_for
 
 from passVer import *
 
+from cookies import set_session, get_session
+
 # from settings import Username, Password
 
 app = Flask(__name__)
@@ -59,7 +61,8 @@ def button():
         elif request.form.get('homePage') == "Home":
             return render_template("main.html")
         elif request.form.get('signup') == "Sign up":
-            username = request.form['username']
+            firstName = request.form['firstName']
+            lastName = request.form['lastName']
             secureQuestion = request.form['secureAnswer']
             if request.form['email'] == request.form['email2']:
                 email = request.form['email']
@@ -83,27 +86,29 @@ def button():
             else:
                 print("Passwords don't match")
                 password = "NULL"
-            print(username, email, password, secureQuestion)
-            cursor.execute("INSERT INTO Users (Username, Email, Password, SecurityQuestion) VALUES (%s, %s, %s, %s)", (username, email, password, secureQuestion))
+            print(firstName, email, password, secureQuestion, lastName)
+            cursor.execute("INSERT INTO Users (FirstName, Email, Password, SecurityQuestion, LastName) VALUES (%s, %s, %s, %s, %s)", (firstName, email, password, secureQuestion, lastName))
             # cursor.close()
             mydb.commit()
             # return username, email, password
             return render_template('login.html')
         elif request.form.get('login') == "Log in":
-            incorrect = ""
+            # incorrect = ""
             password = request.form['password']
             email = request.form['email']
             checkEmail = ""
             checkPassword = ""
-            cursor.execute("SELECT Username, Password, Email FROM Users WHERE Email = %s AND Password = %s", (email, password))
-            for (Username, Password, Email) in cursor:
-                username = Username
+            cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s", (email, password))
+            for (FirstName, Password, Email, LastName) in cursor:
+                firstName = FirstName
                 checkEmail = Email
                 checkPassword = Password
+                lastName = LastName
             if( email == checkEmail and password == checkPassword):
                 print("Login successful")
-
-                return render_template('userInfo.html', userVar = username, userEmail = email)
+                # set_session(email, 'FirstName', 'LastName')
+                return render_template('userInfo.html', userVar = firstName + " " + lastName, userEmail = email)
+                # return render_template('userInfo.html', user = get_session())
             else:
                 print("Login failed")
                 incorrect = "Incorrect email or password"
@@ -112,19 +117,6 @@ def button():
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')
     return redirect(url_for('button'))
-
-
-# def passcheck():
-#     # if render_template.__name__ == 'signup.html':
-#         if request.method == 'POST':
-#             if request.form.get('signup') == "Sign up":
-#                 if request.form.get('password') == request.form.get('password2'):
-#                     return render_template('main.html')
-#                 else: return render_template('signup.html')
-#             if request.form.get('login') == "Log in":
-#                 return render_template('signup.html')
-#             # else:
-#             #     return render_template('login.html')
 
 
 if __name__ == '__main__':
