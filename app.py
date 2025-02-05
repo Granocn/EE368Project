@@ -1,16 +1,19 @@
-from operator import truediv
-
+import os
+from datetime import timedelta
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_session import Session
 import mysql.connector
-#from django.db.models import TextField
-from flask import Flask, render_template, request, redirect, url_for, json
-
 from passVer import *
-
-from cookies import set_session, get_session
-
-# from settings import Username, Password
+from cookies import init_app, set_session, get_session
 
 app = Flask(__name__)
+
+# Initialize session and secret key
+init_app(app)
+Session(app)
+
+# Debugging check
+print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
 
 #
 # mydb = mysql.connector.connect(
@@ -40,6 +43,8 @@ cursor = mydb.cursor()
 # query = "SELECT Username, Password, Email FROM Users"
 # cursor.execute(query)
 # cursor.execute("SELECT * FROM Users")
+
+
 @app.route('/')
 def main():  # put application's code here
     return render_template('main.html')
@@ -63,82 +68,43 @@ def button():
         elif request.form.get('signup') == "Sign up":
             firstName = request.form['firstName']
             lastName = request.form['lastName']
-            email = request.form['email']
-
-            # Check for empty first and last names
-            if firstName == "" or lastName == "":
-                # Display the error to the user
-                return render_template('signup.html',
-                                       incorrect='Error : Both a first and last name must be entered!')
-
-            # Check for empty email
-            elif email == "":
-                # Display the error to the user
-                return render_template('signup.html',
-                                       incorrect='Error : An email must be entered!')
-
-            # Check that the emails match
-            elif email == request.form['email2']:
-
-                # Search for the email in the database
-                cursor.execute(
-                    "SELECT Email FROM Users WHERE Email = %s", (email,))
-
-                # If the email is found its type will be tuple, not none
-                if cursor.fetchone() is not None:
-                    print("email exists already")
-                    # Display the error to the user
-                    return render_template('signup.html',
-                                           incorrect='Error : An account with this email already exists!')
-
-                # Check that the passwords match
-                elif request.form['password'] == request.form['password2']:
-                    password = request.form['password']
-
-                    # Determine if the password passes verification
-                    passMess = PasswordVerification(password)
-
-                    # Check for passing
-                    if passMess == "":
-                        # Hash the password
-                        password = hashPass(password)
-
-                        # Insert the info into the database
-                        cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)",
-                                   (firstName, email, password, lastName))
-                        mydb.commit()
-
-                        # Redirect the user
-                        return render_template('login.html')
-
-                    # Password did not pass
-                    else:
-                        # Display the error to the user
-                        return render_template('signup.html', incorrect = passMess)
-
-                # Passwords did not match
-                else:
-                    # Display the error to the user
-                    return render_template('signup.html',
-                                           incorrect='Error : Passwords must match!')
-
-            # Emails did not match
+            if request.form['email'] == request.form['email2']:
+                email = request.form['email']
             else:
-                # Display the error to the user
-                return render_template('signup.html',
-                                       incorrect='Error : Emails must match!')
+                print("Emails don't match")
+                email = "NULL"
+            #             # email = request.fm['email']
+            if request.form['password'] == request.form['password2']:
+                password = request.form['password']
 
+                # Determine if the password passes verification
+                passMess = PasswordVerification(password)
+
+                # Check for passing
+                if passMess == "":
+                    password = hashPass(password)
+                # Password did not pass
+                else:
+                    print(passMess)  # Display this to the user
+                    password = "NULL"
+            else:
+                print("Passwords don't match")
+                password = "NULL"
+            print(firstName, email, password, lastName)
+            cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)", (firstName, email, password, lastName))
+            # cursor.close()
+            mydb.commit()
+            # return username, email, password
+            return render_template('login.html')
         elif request.form.get('login') == "Log in":
-
+            # incorrect = ""
             password = hashPass(request.form['password'])
             print(password)
             email = request.form['email']
             checkEmail = ""
             checkPassword = ""
             firstName = ""
-
             cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s", (email, password))
-
             for (FirstName, Password, Email, LastName) in cursor:
                 firstName = FirstName
                 checkEmail = Email
@@ -147,9 +113,10 @@ def button():
             if( email == checkEmail and password == checkPassword):
                 print("Login successful")
 
-                # set_session(email, 'FirstName', 'LastName')
+                set_session(firstName, email, firstName, lastName)
+                print("Session data after login:", get_session())  # Debugging check
                 return render_template('userInfo.html', userVar = firstName + " " + lastName, userEmail = email)
-                # return render_template('userInfo.html', user = get_session())
+                user_data = get_session()
             else:
                 print("Login failed")
                 print(firstName)
@@ -159,6 +126,7 @@ def button():
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')
     return redirect(url_for('button'))
+
 
 
 if __name__ == '__main__':
