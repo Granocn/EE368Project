@@ -2,7 +2,7 @@ from operator import truediv
 
 import mysql.connector
 #from django.db.models import TextField
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, json
 
 from passVer import *
 
@@ -63,43 +63,82 @@ def button():
         elif request.form.get('signup') == "Sign up":
             firstName = request.form['firstName']
             lastName = request.form['lastName']
-            if request.form['email'] == request.form['email2']:
-                email = request.form['email']
-            else:
-                print("Emails don't match")
-                email = "NULL"
-            #             # email = request.fm['email']
-            if request.form['password'] == request.form['password2']:
-                password = request.form['password']
+            email = request.form['email']
 
-                # Determine if the password passes verification
-                passMess = PasswordVerification(password)
+            # Check for empty first and last names
+            if firstName == "" or lastName == "":
+                # Display the error to the user
+                return render_template('signup.html',
+                                       incorrect='Error : Both a first and last name must be entered!')
 
-                # Check for passing
-                if passMess == "":
-                    password = hashPass(password)
-                # Password did not pass
+            # Check for empty email
+            elif email == "":
+                # Display the error to the user
+                return render_template('signup.html',
+                                       incorrect='Error : An email must be entered!')
+
+            # Check that the emails match
+            elif email == request.form['email2']:
+
+                # Search for the email in the database
+                cursor.execute(
+                    "SELECT Email FROM Users WHERE Email = %s", (email,))
+
+                # If the email is found its type will be tuple, not none
+                if cursor.fetchone() is not None:
+                    print("email exists already")
+                    # Display the error to the user
+                    return render_template('signup.html',
+                                           incorrect='Error : An account with this email already exists!')
+
+                # Check that the passwords match
+                elif request.form['password'] == request.form['password2']:
+                    password = request.form['password']
+
+                    # Determine if the password passes verification
+                    passMess = PasswordVerification(password)
+
+                    # Check for passing
+                    if passMess == "":
+                        # Hash the password
+                        password = hashPass(password)
+
+                        # Insert the info into the database
+                        cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)",
+                                   (firstName, email, password, lastName))
+                        mydb.commit()
+
+                        # Redirect the user
+                        return render_template('login.html')
+
+                    # Password did not pass
+                    else:
+                        # Display the error to the user
+                        return render_template('signup.html', incorrect = passMess)
+
+                # Passwords did not match
                 else:
-                    print(passMess)  # Display this to the user
-                    password = "NULL"
+                    # Display the error to the user
+                    return render_template('signup.html',
+                                           incorrect='Error : Passwords must match!')
+
+            # Emails did not match
             else:
-                print("Passwords don't match")
-                password = "NULL"
-            print(firstName, email, password, lastName)
-            cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)", (firstName, email, password, lastName))
-            # cursor.close()
-            mydb.commit()
-            # return username, email, password
-            return render_template('login.html')
+                # Display the error to the user
+                return render_template('signup.html',
+                                       incorrect='Error : Emails must match!')
+
         elif request.form.get('login') == "Log in":
-            # incorrect = ""
+
             password = hashPass(request.form['password'])
             print(password)
             email = request.form['email']
             checkEmail = ""
             checkPassword = ""
             firstName = ""
+
             cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s", (email, password))
+
             for (FirstName, Password, Email, LastName) in cursor:
                 firstName = FirstName
                 checkEmail = Email
