@@ -1,16 +1,19 @@
-from operator import truediv
-
+import os
+from datetime import timedelta
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_session import Session
 import mysql.connector
-#from django.db.models import TextField
-from flask import Flask, render_template, request, redirect, url_for
-
 from passVer import *
-
-from cookies import set_session, get_session
-
-# from settings import Username, Password
+from cookies import init_app, set_session, get_session
 
 app = Flask(__name__)
+
+# Initialize session and secret key
+init_app(app)
+Session(app)
+
+# Debugging check
+print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
 
 #
 # mydb = mysql.connector.connect(
@@ -40,6 +43,8 @@ cursor = mydb.cursor()
 # query = "SELECT Username, Password, Email FROM Users"
 # cursor.execute(query)
 # cursor.execute("SELECT * FROM Users")
+
+
 @app.route('/')
 def main():  # put application's code here
     return render_template('main.html')
@@ -108,9 +113,10 @@ def button():
             if( email == checkEmail and password == checkPassword):
                 print("Login successful")
 
-                # set_session(email, 'FirstName', 'LastName')
+                set_session(firstName, email, firstName, lastName)
+                print("Session data after login:", get_session())  # Debugging check
                 return render_template('userInfo.html', userVar = firstName + " " + lastName, userEmail = email)
-                # return render_template('userInfo.html', user = get_session())
+                user_data = get_session()
             else:
                 print("Login failed")
                 print(firstName)
@@ -120,6 +126,7 @@ def button():
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')
     return redirect(url_for('button'))
+
 
 
 if __name__ == '__main__':
