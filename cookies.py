@@ -1,10 +1,15 @@
+import os
+
+from django.conf.global_settings import SECRET_KEY
 from flask import session
 from datetime import timedelta
 
+from flask_session import Session
+
 def init_app(app):
-    """Initialize session configuration for the app."""
-    app.secret_key = 'secret_key'  # We need a secret key for session management
-    app.permanent_session_lifetime = timedelta(days=1)  # Sets the session lifetime duration (days or hours)
+    app.config['SESSION_TYPE'] = 'filesystem'  # Store sessions on the server
+    app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_key')
+    app.permanent_session_lifetime = timedelta(days=1)
 
 def set_session(username, email, first_name, last_name):
     """Sets session data for the user."""
@@ -31,3 +36,4 @@ def clear_session():
 def is_logged_in():
     """Checks if a user is logged in."""
     return 'username' in session
+
