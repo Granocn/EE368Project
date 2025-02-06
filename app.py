@@ -104,6 +104,8 @@ def button():
             else:
                 print("Passwords don't match")
                 password = "NULL"
+            if(firstName == "" or lastName == "" or email == ""):
+                return render_template("signup.html", missingFields = "Please fill all fields")
             print(firstName, email, password, lastName)
             cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)", (firstName, email, password, lastName))
             # cursor.close()
