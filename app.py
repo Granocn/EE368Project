@@ -49,7 +49,7 @@ cursor = mydb.cursor()
 def main():  # put application's code here
     return render_template('main.html')
 
-
+#
 # def loginclick():
 #     if request.method == 'POST':
 #         if request.form['login_button'] == 'Login':
@@ -58,7 +58,20 @@ def main():  # put application's code here
 
 @app.route('/', methods=["GET", "POST"])
 def button():
+
     if request.method =="POST":
+        if request.form.get('homePage') == "Home":
+            return render_template("main.html")
+        if request.form.get('userInfoPage') == "User Info":
+            user_data = get_session()
+            print(user_data)
+            firstName = user_data['first_name']
+            lastName = user_data['last_name']
+            email = user_data['email']
+            if (user_data['email'] == None):
+                return render_template("main.html")
+            else:
+                return render_template("userInfo.html", userVar = firstName + " " + lastName, userEmail = email)
         if request.form.get('loginPage') == "Log in":
             return render_template("login.html")
         elif request.form.get('signupPage') == "Sign up":
@@ -83,6 +96,7 @@ def button():
                 # Check for passing
                 if passMess == "":
                     password = hashPass(password)
+
                 # Password did not pass
                 else:
                     print(passMess)  # Display this to the user
@@ -113,10 +127,11 @@ def button():
             if( email == checkEmail and password == checkPassword):
                 print("Login successful")
 
-                set_session(firstName, email, firstName, lastName)
+                set_session(email, firstName, lastName)
+                user_data = get_session()
                 print("Session data after login:", get_session())  # Debugging check
                 return render_template('userInfo.html', userVar = firstName + " " + lastName, userEmail = email)
-                user_data = get_session()
+
             else:
                 print("Login failed")
                 print(firstName)
@@ -125,6 +140,7 @@ def button():
             # return render_template('userInfo.html')
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')
+
     return redirect(url_for('button'))
 
 
