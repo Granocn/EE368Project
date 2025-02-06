@@ -1,5 +1,6 @@
 import string
 import hashlib
+import random
 
 # Purpose: Hash a password using SHA256
 # Pre: The password being hashed
@@ -55,3 +56,15 @@ def PasswordVerification(password):
                 "one lowercase letter, one number, and one special character!")
     else:
         return "Error : Password too short, it must be at least 8 characters long!"
+
+
+# Makes a random token and sends an email
+def MakeTokenSendEmail(email):
+
+    # Get a random token
+    token = str(random.randint(100000, 999999))
+
+    # Send the email
+
+    # Return the toke
+    return token
