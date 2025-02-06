@@ -48,11 +48,10 @@ def PasswordVerification(password):
             if (l + p + u + d == len(password)):
                 return ""
             else:
-                return "Invalid Password : One or more characters are not allowed!"
+                return "Error : One or more characters are not allowed!"
 
         else:
-            return ("Invalid Password : Please make sure your password has atleast one uppercase letter, "
+            return ("Error : Please make sure your password has atleast one uppercase letter, "
                 "one lowercase letter, one number, and one special character!")
     else:
-        return "Invalid Password : Password too short!"
-
+        return "Error : Password too short, it must be at least 8 characters long!"
