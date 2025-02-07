@@ -1,31 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link href="../static/style.css" rel="stylesheet" type="text/css">
-<title>Log in Page</title>
+  <title>Log in Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- W3.CSS framework -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Custom CSS -->
+  <link href="../static/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <div id="element1">
-        <p>Welcome to log-in</p>
-        <form method="post">
 
-            <input type="text" name="email" placeholder="Email">
-            <input type="password" name="password" placeholder="Password">
-            <input type="submit" name="login" value="Log in">
-            <div id="element4">
-                <p>{{incorrect}}</p>
-            </div>
-            <input type="submit" name="forgotPass" value="Forgot password">
-
-        </form>
+  <!-- Navbar (clickable project home) -->
+  <div class="w3-top">
+    <div class="w3-bar w3-red w3-card">
+      <a href="/" class="w3-bar-item w3-button w3-large">EE368 Project</a>
     </div>
-    <div id="element2">
-        <form method="post">
-            <input type="submit" value="Sign up" name="signupPage" >
-            <input type="submit" value="Home" name="homePage" >
-        </form>
+  </div>
 
+  <!-- Header Section for Log in -->
+  <header class="w3-container w3-red w3-center header-custom" style="padding:128px 16px;">
+    <h1 class="w3-margin w3-jumbo">Log in</h1>
+    <p class="w3-xlarge">Enter your credentials to sign in</p>
+
+    <!-- Centered Login Form -->
+    <div class="w3-center">
+      <form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-red login-form">
+        <!-- Email Input -->
+        <div class="w3-row w3-section">
+          <div class="w3-rest">
+            <input class="w3-input w3-border" name="email" type="text" placeholder="Email">
+          </div>
+        </div>
+        <!-- Password Input -->
+        <div class="w3-row w3-section">
+          <div class="w3-rest">
+            <input class="w3-input w3-border" name="password" type="password" placeholder="Password">
+          </div>
+        </div>
+        <!-- Log in Button -->
+        <button type="submit" name="login" value="Log in" class="w3-button w3-block w3-black w3-hover-opacity">
+          Log in
+        </button>
+
+        <!-- Display error message if login failed -->
+        <div class="w3-text-red w3-margin-top">
+          <p>{{incorrect}}</p>
+        </div>
+
+        <!-- Integrated Sign-up Link styled as a button -->
+        <p class="w3-margin-top">
+          Don't have an account?
+          <button type="submit" name="signupPage" value="Sign up" style="background:none; border:none; color:blue; padding:0; cursor:pointer; text-decoration:underline;">
+            Sign up here!
+          </button>
+        </p>
+
+        <!-- Forgot Password Button -->
+        <button type="submit" name="forgotPass" value="Forgot Password" class="w3-button w3-block w3-white w3-border w3-border-red w3-hover-red">
+          Forgot Password
+        </button>
+      </form>
     </div>
+  </header>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-center w3-opacity w3-light-grey w3-padding-32">
+    <p>Powered by <a href="https://www.w3schools.com/w3css/" target="_blank">w3.css</a></p>
+  </footer>
+
 </body>
 </html>
