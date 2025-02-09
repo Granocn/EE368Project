@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="../static/style.css" rel="stylesheet" type="text/css">
+<title>Verification Page</title>
+</head>
+<body>
+    <div id="element1">
+        <p>Verification</p>
+        <p>{{header}}</p>
+        <form method="post">
+            <input type="text" name="token" placeholder="Enter code here!">
+            <div id="element4">
+                <p>{{incorrect}}</p>
+            </div>
+            <input type="submit" value="Submit" name="tokenSubmit" >
+        </form>
+    </div>
+ <div id="element2">
+        <form method="post">
+            <input type="submit" value="Home" name="homePage" >
+        </form>
+
+    </div>
+</body>
+</html>

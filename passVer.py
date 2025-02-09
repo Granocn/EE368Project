@@ -1,10 +1,34 @@
 import string
 import hashlib
+import random
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Sends an email to the specified recEmail
+def SendEmail(email,body,sub):
+    # creates SMTP session
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    # start TLS for security
+    s.starttls()
+    # Authentication
+    s.login("ee368project@gmail.com", "agbk izdf kpfe ssby")
+    # Create a MIMEText object to represent the email
+    msg = MIMEMultipart()
+    msg['Subject'] = sub
+
+    # Attach the body of the email to the message
+    msg.attach(MIMEText(body, 'plain'))
+    s.sendmail("ee368project@gmail.com", email, msg.as_string())
+    # terminating the session
+    s.quit()
+
+
 
 # Purpose: Hash a password using SHA256
 # Pre: The password being hashed
 # Post: Returns the hashed password
-def hashPass(password):
+def HashPass(password):
     data_to_hash = password
     hash_object = hashlib.sha256(data_to_hash.encode())
     hex_digest = hash_object.hexdigest()
@@ -55,3 +79,6 @@ def PasswordVerification(password):
                 "one lowercase letter, one number, and one special character!")
     else:
         return "Error : Password too short, it must be at least 8 characters long!"
+
+
+
