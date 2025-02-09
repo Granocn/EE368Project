@@ -1,27 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link href="../static/style.css" rel="stylesheet" type="text/css">
-<title>EE368 Project</title>
+  <title>EE368 Project</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- W3.CSS framework -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Custom CSS -->
+  <link href="../static/style.css" rel="stylesheet" type="text/css">
+
 </head>
 <body>
-    <div id="element1">
-        <p>Welcome to application</p>
+
+  <!-- Navbar with User Info button -->
+  <div class="w3-top">
+    <div class="w3-bar w3-red w3-card">
+      <!-- Home/Project title -->
+      <a href="/" class="w3-bar-item w3-button w3-large">EE368 Project</a>
+      <!-- Inline form for User Info -->
+      <form method="post" style="display: inline;">
+        <button
+          type="submit"
+          name="userInfoPage"
+          value="User Info"
+          class="w3-bar-item w3-button w3-right w3-hide-small w3-hover-white">
+          User Info
+        </button>
+      </form>
     </div>
+  </div>
 
-    <div id="element2" class="container">
+  <!-- Header with Log in and Sign up buttons -->
+  <header class="w3-container w3-red w3-center header-custom" style="padding:128px 16px;">
+    <h1 class="w3-margin w3-jumbo">Welcome!</h1>
+    <p class="w3-xlarge">Welcome to our EE368 OAuth Project!</p>
 
-        <form method="post">
-<!--{#            <button name="login" >Login</button>#}-->
-<!--{#            <button name="signup" >Signup</button>#}-->
-            <input type="submit" value="Log in" name="loginPage" >
-            <input type="submit" value="Sign up" name="signupPage" >
-        </form>
+    <!-- Form for Log in and Sign up -->
+    <form method="post">
+      <button
+        type="submit"
+        name="loginPage"
+        value="Log in"
+        class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-hover-opacity">
+        Log in
+      </button>
+      <button
+        type="submit"
+        name="signupPage"
+        value="Sign up"
+        class="w3-button w3-black w3-padding-large w3-large w3-margin-top w3-hover-opacity">
+        Sign up
+      </button>
+    </form>
+  </header>
 
-    </div>
-
-
+  <!-- Footer -->
+  <footer class="w3-container w3-center w3-opacity w3-light-grey w3-padding-32">
+    <p>Powered by <a href="https://www.w3schools.com/w3css/" target="_blank">w3.css</a></p>
+  </footer>
 
 </body>
 </html>

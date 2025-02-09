@@ -24,7 +24,7 @@ cursor = mydb.cursor()
 def main():  # put application's code here
     return render_template('main.html')
 
-
+#
 # def loginclick():
 #     if request.method == 'POST':
 #         if request.form['login_button'] == 'Login':
@@ -33,6 +33,7 @@ def main():  # put application's code here
 
 @app.route('/', methods=["GET", "POST"])
 def button():
+
     global token        # Access token for various verifications
     global email        # User email
     global firstName    # User first name
@@ -41,6 +42,22 @@ def button():
     global forgotFlag
 
     if request.method =="POST":
+
+
+
+    if request.method =="POST":
+        if request.form.get('homePage') == "Home":
+            return render_template("main.html")
+        if request.form.get('userInfoPage') == "User Info":
+            user_data = get_session()
+            print(user_data)
+            firstName = user_data['first_name']
+            lastName = user_data['last_name']
+            email = user_data['email']
+            if (user_data['email'] == None):
+                return render_template("main.html")
+            else:
+                return render_template("userInfo.html", userVar = firstName + " " + lastName, userEmail = email)
 
         if request.form.get('loginPage') == "Log in":
             return render_template("login.html")
@@ -61,6 +78,7 @@ def button():
                 # Display the error to the user
                 return render_template('signup.html',
                                        incorrect='Error : Both a first and last name must be entered!')
+
 
             # Check for empty email
             elif email == "":
@@ -121,6 +139,13 @@ def button():
                         return render_template('signup.html', incorrect = passMess)
 
                 # Passwords did not match
+
+                # Check for passing
+                if passMess == "":
+                    password = hashPass(password)
+
+                # Password did not pass
+
                 else:
                     # Display the error to the user
                     return render_template('signup.html',
@@ -128,9 +153,22 @@ def button():
 
             # Emails did not match
             else:
+
                 # Display the error to the user
                 return render_template('signup.html',
                                        incorrect='Error : Emails must match!')
+
+
+                print("Passwords don't match")
+                password = "NULL"
+            if(firstName == "" or lastName == "" or email == ""):
+                return render_template("signup.html", missingFields = "Please fill all fields")
+            print(firstName, email, password, lastName)
+            cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)", (firstName, email, password, lastName))
+            # cursor.close()
+            mydb.commit()
+            # return username, email, password
+            return render_template('login.html')
 
         elif request.form.get('login') == "Log in":
 
@@ -154,12 +192,24 @@ def button():
                 return render_template('userInfo.html',
                                        userVar = firstName + " " + lastName, userEmail = email)
 
+
             # Login Unsuccessful
+
+                set_session(email, firstName, lastName)
+                user_data = get_session()
+                print("Session data after login:", get_session())  # Debugging check
+                return render_template('userInfo.html', userVar = firstName + " " + lastName, userEmail = email)
+
+
             else:
                 return render_template('login.html', incorrect = "Error : Incorrect email or password")
 
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')
+
+
+    return redirect(url_for('button'))
+
 
         elif request.form.get('tokenSubmit') == "Submit":
 

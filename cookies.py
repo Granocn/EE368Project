@@ -11,10 +11,9 @@ def init_app(app):
     app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_key')
     app.permanent_session_lifetime = timedelta(days=1)
 
-def set_session(username, email, first_name, last_name):
+def set_session(email, first_name, last_name):
     """Sets session data for the user."""
     session.permanent = True  # Makes the session permanent (so it persists across requests)
-    session['username'] = username
     session['email'] = email
     session['first_name'] = first_name
     session['last_name'] = last_name
@@ -22,7 +21,6 @@ def set_session(username, email, first_name, last_name):
 def get_session():
     """Gets session data for the user."""
     user_data = {
-        'username': session.get('username'),
         'email': session.get('email'),
         'first_name': session.get('first_name'),
         'last_name': session.get('last_name')
