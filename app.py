@@ -101,7 +101,7 @@ def button():
                                          "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, "
                                                                                  "please ignore this.")
                             # Send the email
-                            SendEmail(email,emailMess,"Email Verification")
+                            SendEmail(email,emailMess,"Email Verification - ["+token+"]")
 
                             # Set the forgot flag to false - lets the application know what the tokens purpose is
                             # ie. for account verification or password resetting
@@ -192,7 +192,7 @@ def button():
                                  "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, "
                                  "please ignore this.")
                     # Send the email
-                    SendEmail(email, emailMess, "Email Verification")
+                    SendEmail(email, emailMess, "Email Verification - ["+token+"]")
 
                     return render_template('emailVer.html',
                                            header = 'A new verification code has been sent to '+ email,
@@ -221,7 +221,7 @@ def button():
                              "Verification Code: ") + token + ("\n\n\nIf you are not trying to reset your password, "
                              "please ignore this email.")
                 # Send the email
-                SendEmail(email, emailMess, "Forgotten Password")
+                SendEmail(email, emailMess, "Forgotten Password - ["+token+"]")
 
                 # Set the forgot flag to false - lets the application know what the tokens purpose is
                 # ie. for account verification or password resetting
