@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for, json
+from flask import Flask, render_template, request, redirect, url_for
 from passVer import *
 from cookies import *
 
