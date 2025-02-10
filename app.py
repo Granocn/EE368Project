@@ -54,15 +54,15 @@ def button():
             return render_template("signup.html")
 
         elif request.form.get('homePage') == "Home":
-            user_data = get_session()
-            firstName = user_data['first_name']
-            lastName = user_data['last_name']
-            email = user_data['email']
-            if (user_data['email'] == None):
-                return render_template("main.html")
-            else:
-                return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
-
+            # user_data = get_session()
+            # firstName = user_data['first_name']
+            # lastName = user_data['last_name']
+            # email = user_data['email']
+            # if (user_data['email'] == None):
+            #     return render_template("main.html")
+            # else:
+            #     return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
+            return render_template("main.html")
 
         elif request.form.get('signup') == "Sign up":
             firstName = request.form['firstName']
@@ -166,7 +166,7 @@ def button():
             if( email == checkEmail and password == checkPassword):
 
                 # Begin new session
-                set_session(firstName, email, firstName, lastName)
+                set_session(email, firstName, lastName)
                 #print("Session data after login:", get_session())  # Debugging check
 
                 return render_template('userInfo.html',
