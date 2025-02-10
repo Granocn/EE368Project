@@ -11,7 +11,7 @@ init_app(app)
 Session(app)
 
 # Debugging check
-print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
+#print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
 
 
 mydb = mysql.connector.connect(
@@ -27,7 +27,6 @@ cursor = mydb.cursor()
 @app.route('/')
 def main():
     user_data = get_session()
-    print(user_data)
     firstName = user_data['first_name']
     lastName = user_data['last_name']
     email = user_data['email']
@@ -56,7 +55,6 @@ def button():
 
         elif request.form.get('homePage') == "Home":
             user_data = get_session()
-            print(user_data)
             firstName = user_data['first_name']
             lastName = user_data['last_name']
             email = user_data['email']
@@ -169,7 +167,7 @@ def button():
 
                 # Begin new session
                 set_session(firstName, email, firstName, lastName)
-                print("Session data after login:", get_session())  # Debugging check
+                #print("Session data after login:", get_session())  # Debugging check
 
                 return render_template('userInfo.html',
                                        userVar = firstName + " " + lastName, userEmail = email)
