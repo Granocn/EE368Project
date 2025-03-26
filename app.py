@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
 from passVer import *
 from cookies import *
-
+import random  # Make sure random is imported
 
 app = Flask(__name__)
 
@@ -13,7 +13,6 @@ Session(app)
 # Debugging check
 #print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
 
-
 mydb = mysql.connector.connect(
     host="54.172.50.181",
     user="admin",
@@ -21,20 +20,43 @@ mydb = mysql.connector.connect(
     database="ee368project"
 )
 
-
 cursor = mydb.cursor()
 
 @app.route('/')
 def main():
     user_data = get_session()
-    firstName = user_data['first_name']
-    lastName = user_data['last_name']
-    email = user_data['email']
-    if (user_data['email'] == None):
+    firstName = user_data.get('first_name')
+    lastName = user_data.get('last_name')
+    email = user_data.get('email')
+    if email is None:
         return render_template("main.html")
     else:
         return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
 
+@app.route('/userInfo')
+def user_info():
+    user_data = get_session()
+    firstName = user_data.get('first_name')
+    lastName = user_data.get('last_name')
+    email = user_data.get('email')
+    if email is None:
+        return redirect(url_for('main'))
+    return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
+
+@app.route('/postMain')
+def post_main():
+    user_data = get_session()
+    firstName = user_data.get('first_name')
+    lastName = user_data.get('last_name')
+    email = user_data.get('email')
+    if email is None:
+        return redirect(url_for('main'))
+    return render_template("postMain.html", userVar=firstName + " " + lastName)
+
+@app.route('/logout')
+def logout():
+    clear_session()
+    return render_template("main.html")
 
 @app.route('/', methods=["GET", "POST"])
 def button():
@@ -45,7 +67,7 @@ def button():
     global password     # User password
     global forgotFlag
 
-    if request.method =="POST":
+    if request.method == "POST":
 
         if request.form.get('loginPage') == "Log in":
             return render_template("login.html")
@@ -54,15 +76,8 @@ def button():
             return render_template("signup.html")
 
         elif request.form.get('homePage') == "Home":
-            # user_data = get_session()
-            # firstName = user_data['first_name']
-            # lastName = user_data['last_name']
-            # email = user_data['email']
-            # if (user_data['email'] == None):
-            #     return render_template("main.html")
-            # else:
-            #     return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
-            return render_template("main.html")
+            # For logged in users, redirect to postMain page
+            return render_template("postMain.html", userVar=firstName + " " + lastName)
 
         elif request.form.get('signup') == "Sign up":
             firstName = request.form['firstName']
@@ -83,7 +98,6 @@ def button():
 
             # Check that the emails match
             elif email == request.form['email2']:
-
                 # Search for the email in the database
                 cursor.execute("SELECT Email FROM Users WHERE Email = %s", (email,))
 
@@ -104,41 +118,37 @@ def button():
                     if passMess == "":
                         # Hash the password
                         password = HashPass(password)
-
                         try:
                             # Get a random token
                             token = str(random.randint(100000, 999999))
 
                             # Make the email message
                             emailMess = ("To complete your registration for your EE368Project account please use the following verification code.\n\n"
-                                         "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, "
-                                                                                 "please ignore this.")
-                            # Send the email
-                            SendEmail(email,emailMess,"Email Verification - ["+token+"]")
+                                         "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, please ignore this.")
 
-                            # Set the forgot flag to false - lets the application know what the tokens purpose is
-                            # ie. for account verification or password resetting
+                            # Send the email
+                            SendEmail(email, emailMess, "Email Verification - ["+token+"]")
+
+                            # Set the forgot flag to false - lets the application know what the token's purpose is
                             forgotFlag = False
 
                             # Redirect the user
                             return render_template('emailVer.html',
-                                                   header = 'A verification code has been sent to '+ email)
+                                                   header='A verification code has been sent to ' + email)
                         except:
                             # Display the error to the user
                             return render_template('signup.html',
                                                    incorrect='Error : Email Address Cannot be Found!')
-
                     # Password did not pass
                     else:
                         # Display the error to the user
-                        return render_template('signup.html', incorrect = passMess)
+                        return render_template('signup.html', incorrect=passMess)
 
                 # Passwords did not match
                 else:
                     # Display the error to the user
                     return render_template('signup.html',
                                            incorrect='Error : Passwords must match!')
-
             # Emails did not match
             else:
                 # Display the error to the user
@@ -146,16 +156,12 @@ def button():
                                        incorrect='Error : Emails must match!')
 
         elif request.form.get('login') == "Log in":
-
             # Hash the password they input
             password = HashPass(request.form['password'])
             email = request.form['email']
-
             checkEmail = ""
             checkPassword = ""
-
             cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s", (email, password))
-
             for (FirstName, Password, Email, LastName) in cursor:
                 firstName = FirstName
                 checkEmail = Email
@@ -163,59 +169,49 @@ def button():
                 lastName = LastName
 
             # Successful login
-            if( email == checkEmail and password == checkPassword):
-
+            if email == checkEmail and password == checkPassword:
                 # Begin new session
                 set_session(email, firstName, lastName)
-                #print("Session data after login:", get_session())  # Debugging check
 
+                # print("Session data after login:", get_session())  # Debugging check
                 return render_template('userInfo.html',
-                                       userVar = firstName + " " + lastName, userEmail = email)
-
-
+                                       userVar=firstName + " " + lastName, userEmail=email)
             # Login Unsuccessful
             else:
-                return render_template('login.html', incorrect = "Error : Incorrect email or password")
+                return render_template('login.html', incorrect="Error : Incorrect email or password")
 
         elif request.form.get('forgotPass') == "Forgot Password":
             return render_template('forgotPassword.html')
 
         elif request.form.get('tokenSubmit') == "Submit":
-
+            # Correct token is entered
             if forgotFlag:
-                # Correct token is entered
                 if request.form['token'] == token:
                     return render_template('resetPassword.html')
                 else:
                     return render_template('forgotPassword.html',
-                                           incorrect = "Error : Invalid code please try again!")
-
+                                           incorrect="Error : Invalid code please try again!")
             else:
                 # Correct token is entered
                 if request.form['token'] == token:
                     # Insert the info into the database
                     cursor.execute("INSERT INTO Users (FirstName, Email, Password, LastName) VALUES (%s, %s, %s, %s)",
-                            (firstName, email, password, lastName))
-
+                                   (firstName, email, password, lastName))
                     # Commit the data
                     mydb.commit()
-
                     return render_template('login.html')
                 # Incorrect token is entered
                 else:
                     # Get a random token
                     token = str(random.randint(100000, 999999))
-
                     # Make the email message
                     emailMess = ("To complete your registration for your EE368Project account please use the following verification code.\n\n"
-                                 "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, "
-                                 "please ignore this.")
+                                 "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, please ignore this.")
                     # Send the email
                     SendEmail(email, emailMess, "Email Verification - ["+token+"]")
-
                     return render_template('emailVer.html',
-                                           header = 'A new verification code has been sent to '+ email,
-                                           incorrect = 'Error : Email Verification Failed!')
+                                           header='A new verification code has been sent to ' + email,
+                                           incorrect='Error : Email Verification Failed!')
 
         elif request.form.get('forgotPassEmail') == "Submit":
             # Get the email the user provided
@@ -223,30 +219,23 @@ def button():
 
             # Search for the email in the database
             cursor.execute("SELECT Email FROM Users WHERE Email = %s", (email,))
-
             # If the email is found its type will be tuple, not none
             if cursor.fetchone() is None:
                 # Display the error to the user
                 return render_template('forgotPassword.html',
                                        incorrect='Error : No account found using this email!')
-
             else:
                 try:
                     # Get a random token
                     token = str(random.randint(100000, 999999))
-
                     # Make the email message
                     emailMess = ("We've received a request to reset your password for your EE368Project account.\n\n"
                                  "Please use the following one-time verification code to reset your password.\n\n"
-                                 "Verification Code: ") + token + ("\n\n\nIf you are not trying to reset your password, "
-                                 "please ignore this email.")
+                                 "Verification Code: ") + token + ("\n\n\nIf you are not trying to reset your password, please ignore this email.")
                     # Send the email
                     SendEmail(email, emailMess, "Forgotten Password - ["+token+"]")
-
-                    # Set the forgot flag to false - lets the application know what the tokens purpose is
-                    # ie. for account verification or password resetting
+                    # Set the forgot flag to true - lets the application know what the token's purpose is
                     forgotFlag = True
-
                     return render_template('emailVer.html',
                                            header='A recovery code has been sent to ' + email)
                 except:
@@ -257,37 +246,27 @@ def button():
             # Check that the passwords match
             if request.form['password'] == request.form['password2']:
                 password = request.form['password']
-
                 # Determine if the password passes verification
                 passMess = PasswordVerification(password)
-
                 # Check for passing
                 if passMess == "":
                     # Hash the password
                     password = HashPass(password)
-
                     # Change the password in the database
-                    cursor.execute("UPDATE Users SET Password = %s WHERE Email = %s;", (password,email))
-
+                    cursor.execute("UPDATE Users SET Password = %s WHERE Email = %s;", (password, email))
                     # Commit the data
                     mydb.commit()
-
                     # Clear the cookie session to be safe
                     clear_session()
-
                     # Return them to login
                     return render_template('login.html')
-
                 else:
                     return render_template('resetPassword.html',
-                                           incorrect = passMess)
-
+                                           incorrect=passMess)
             else:
                 return render_template('resetPassword.html',
-                                       incorrect = "Error : Passwords must match!")
-
+                                       incorrect="Error : Passwords must match!")
     return redirect(url_for('button'))
-
 
 if __name__ == '__main__':
     app.run()

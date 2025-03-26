@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Forgot Password</title>
+  <title>EE368 Project - Home</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- W3.CSS framework -->
@@ -16,32 +16,22 @@
 </head>
 <body>
 
-
-  <!-- Navbar (clickable project home) -->
+  <!-- Navbar with additional buttons -->
   <div class="w3-top">
     <div class="w3-bar w3-red w3-card">
-      <a href="/" class="w3-bar-item w3-button w3-large">EE368 Project</a>
+      <!-- Main title linking to postMain -->
+      <a href="/postMain" class="w3-bar-item w3-button w3-large">EE368 Project</a>
+      <!-- User Info button -->
+      <a href="/userInfo" class="w3-bar-item w3-button w3-right w3-hide-small w3-hover-white">User Info</a>
+      <!-- Log Out button -->
+      <a href="/logout" class="w3-bar-item w3-button w3-right w3-hide-small w3-hover-white">Log Out</a>
     </div>
   </div>
 
-  <!-- Header Section for Forgot Password -->
-  <header class="w3-container w3-red w3-center header-custom" style="padding:128px 16px; margin-top:50px;">
-    <h1 class="w3-margin w3-jumbo">Forgot Password</h1>
-    <p class="w3-xlarge">Enter your email address to reset your password</p>
-
-    <!-- Centered Forgot Password Form -->
-    <div class="w3-center">
-      <form method="post" class="w3-container w3-card-4 w3-light-grey w3-text-red login-form">
-        <div class="w3-row w3-section">
-          <div class="w3-rest">
-            <input class="w3-input w3-border" name="email" type="text" placeholder="Enter email here">
-          </div>
-        </div>
-        <button type="submit" name="forgotPassEmail" value="Submit" class="w3-button w3-block w3-black w3-hover-opacity">
-          Submit
-        </button>
-      </form>
-    </div>
+  <!-- Header with user's name -->
+  <header class="w3-container w3-red w3-center header-custom" style="padding:128px 16px;">
+    <h1 class="w3-margin w3-jumbo">Welcome, {{ userVar }}!</h1>
+    <p class="w3-xlarge">This is your home page.</p>
   </header>
 
   <!-- Footer -->

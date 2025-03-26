@@ -13,57 +13,57 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- Custom CSS -->
   <link href="../static/style.css" rel="stylesheet" type="text/css">
-
 </head>
 <body>
 
   <!-- Navbar -->
   <div class="navbar">
-    <a href="/">EE368 Project</a>
-<!--    <form method="post">-->
-<!--      <button type="submit" name="logout" value="Logout" class="logout-btn">Log Out</button>-->
-<!--    </form>-->
+    <!-- Changed the home link to point to postMain -->
+    <a href="/postMain">EE368 Project</a>
+    <a href="/logout" class="w3-bar-item w3-button w3-right w3-hide-small w3-hover-white">Log Out</a>
   </div>
 
-<!-- Main Content -->
-<div class="content">
-  <!-- Outer Card - Adds color/depth -->
-  <div class="w3-card-4 w3-red w3-padding-large w3-round outer-card" style="max-width: 700px; margin-top: -150px;">
-    <!-- Inner User Info Card -->
-    <div class="w3-card-4 w3-light-grey w3-text-red login-form" style="padding: 30px;">
-      <!-- Account Icon -->
-      <div class="w3-center">
-        <i class="fa fa-user-circle-o w3-text-red" style="font-size: 110px;"></i> <!-- Slightly bigger icon -->
-      </div>
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Outer Card - Adds color/depth -->
+    <div class="w3-card-4 w3-red w3-padding-large w3-round outer-card" style="max-width: 700px; margin-top: -150px;">
+      <!-- Inner User Info Card -->
+      <div class="w3-card-4 w3-light-grey w3-text-red login-form" style="padding: 30px;">
+        <!-- Account Icon -->
+        <div class="w3-center">
+          <i class="fa fa-user-circle-o w3-text-red" style="font-size: 110px;"></i>
+        </div>
 
-      <!-- User Details -->
-      <div class="w3-container">
-        <p><strong>Name:</strong> {{ userVar }}</p>
-        <p><strong>Email:</strong> {{ userEmail }}</p>
-        <p><strong>Bio:</strong>
-          {% if userBio %}
-            {{ userBio }}
-          {% else %}
-            No bio available
-          {% endif %}
-        </p>
-      </div>
+        <!-- User Details -->
+        <div class="w3-container">
+          <p><strong>Name:</strong> {{ userVar }}</p>
+          <p><strong>Email:</strong> {{ userEmail }}</p>
+          <p><strong>Bio:</strong>
+            {% if userBio %}
+              {{ userBio }}
+            {% else %}
+              No bio available
+            {% endif %}
+          </p>
+        </div>
 
-      <!-- Home Button -->
-      <div class="w3-center">
-        <form method="post">
-          <button type="submit" name="homePage" value="Home" class="w3-button w3-black w3-hover-opacity">
-            Home
-          </button>
-        </form>
+        <!-- Home Button -->
+        <div class="w3-center">
+          <!-- Changed form action to point to /postMain -->
+          <form method="get" action="/postMain">
+            <button type="submit" class="w3-button w3-black w3-hover-opacity">
+              Home
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- Footer -->
   <footer class="w3-container w3-center w3-opacity w3-light-grey w3-padding-16">
-    <p>Powered by <a href="https://www.w3schools.com/w3css/" target="_blank">w3.css</a></p>
+    <p>Created By: Jen Celis, Joseph Foote, Clint Grano, & Christian Siletti</p>
+    <p>Powered By: <a href="https://www.w3schools.com/w3css/" target="_blank">w3.css</a></p>
   </footer>
 
 </body>
