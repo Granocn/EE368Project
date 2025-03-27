@@ -56,7 +56,7 @@ def post_main():
 @app.route('/logout')
 def logout():
     clear_session()
-    return render_template("main.html")
+    return redirect('/')
 
 @app.route('/', methods=["GET", "POST"])
 def button():
