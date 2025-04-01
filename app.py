@@ -2,7 +2,9 @@ import mysql.connector
 from flask import Flask, render_template, request, redirect, url_for
 from passVer import *
 from cookies import *
-import random  # Make sure random is imported
+import random
+from authlib.integrations.flask_client import OAuth # pip install flask requests authlib
+
 
 app = Flask(__name__)
 
@@ -21,6 +23,55 @@ mydb = mysql.connector.connect(
 )
 
 cursor = mydb.cursor()
+
+######################################################################
+""" 
+The Google OAuth is currently connected to Joe's Google Cloud server for test purposes. 
+When the time comes, we will need to set up a group Google Cloud server and update the following:
+
+   - client_id
+   - client_secret
+   - /authGoogle/callback
+   
+"""
+
+# OAuth Setup
+oauth = OAuth(app)
+google = oauth.register(
+   name='google',
+   client_id='589973263454-m0qhjjp5qkom24okc1s3ghfghuu8uefg.apps.googleusercontent.com',
+   client_secret='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',
+   access_token_url='https://oauth2.googleapis.com/token',
+   access_token_params=None,
+   authorize_url='https://accounts.google.com/o/oauth2/auth',
+   authorize_params=None,
+   api_base_url='https://www.googleapis.com/oauth2/v2/',
+   client_kwargs={'scope': 'openid email profile'},
+   server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+)
+
+@app.route('/auth/google')
+def authGoogle():
+   return google.authorize_redirect(url_for('authorize', _external=True))
+
+
+@app.route('/authGoogle/callback')
+def authorize():
+    token = google.authorize_access_token()
+    resp = google.get('userinfo')
+    user_info = resp.json()
+
+    # Map the keys to what get_session() expects
+    session['first_name'] = user_info.get('given_name')
+    session['last_name'] = user_info.get('family_name')
+    session['email'] = user_info.get('email')
+
+    # Optionally, can also store the whole user_info if needed
+    session['user'] = user_info
+    return redirect('/userInfo')
+
+
+########################################################################
 
 @app.route('/')
 def main():
@@ -56,6 +107,7 @@ def post_main():
 @app.route('/logout')
 def logout():
     clear_session()
+    session.pop('user', None)
     return redirect('/')
 
 @app.route('/', methods=["GET", "POST"])
