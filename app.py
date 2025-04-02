@@ -35,7 +35,7 @@ When the time comes, we will need to set up a group Google Cloud server and upda
    
 """
 
-# OAuth Setup
+#OAuth Setup
 oauth = OAuth(app)
 google = oauth.register(
    name='google',
@@ -71,6 +71,53 @@ def authorize():
     return redirect('/userInfo')
 
 
+#Github OAuth
+github = oauth.register(
+   name='github',
+   client_id='Ov23likj13chtyyolFYf',
+   client_secret='66d88938f145c9344ab90601269db1a09baf98a1',
+   access_token_url='https://github.com/login/oauth/access_token',
+   access_token_params=None,
+   authorize_url='https://github.com/login/oauth/authorize',
+   authorize_params=None,
+   api_base_url='https://api.github.com/',
+   client_kwargs={'scope': 'read:user user:email'},
+
+)
+
+@app.route('/auth/github')
+def authGithub():
+   return github.authorize_redirect(url_for('authorizeGit', _external=True))
+
+@app.route('/authgithub/callback')
+def authorizeGit():
+    try:
+        token = github.authorize_access_token()
+        resp = github.get('user')
+        user_info = resp.json()
+
+        # store user's email if available
+        email_resp = github.get('user/emails')
+        emails = email_resp.json()  # list emails associated with GitHub account
+        email = None
+        for e in emails:
+            if e['primary']:
+                email = e['email']
+                break
+        print(f"Email: {email}")  # log the email
+
+        # Store relevant user info in the session
+        session['first_name'] = user_info.get('login')
+        session['last_name'] = user_info.get('name', 'No name available')
+        session['email'] = email
+        session['bio'] = user_info.get('bio', 'No bio available')
+
+        return redirect('/userInfo')
+
+    except Exception as e:
+        print(f"Error during GitHub authorization callback: {e}")  # Debugging
+        return f"Error during GitHub authorization callback: {e}", 500
+
 ########################################################################
 
 @app.route('/')
@@ -90,9 +137,20 @@ def user_info():
     firstName = user_data.get('first_name')
     lastName = user_data.get('last_name')
     email = user_data.get('email')
+    bio = user_data.get('bio')
     if email is None:
         return redirect(url_for('main'))
-    return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
+
+    # combine first and last name
+    if lastName:
+        full_name = f"{firstName} {lastName}"
+    else:  # if last_name is None, just use first_name
+        full_name = firstName
+
+    return render_template("userInfo.html",
+                           userVar=full_name,
+                           userEmail=email,
+                           userBio=bio)
 
 @app.route('/postMain')
 def post_main():
