@@ -125,7 +125,7 @@ def main():
 @app.route('/userInfo')
 def user_info():
     user_data = get_session()
-    if not user_data:  #debugging
+    if not user_data:
         print("No user data in session")
         return redirect(url_for('main'))
     firstName = user_data.get('first_name')
@@ -136,9 +136,9 @@ def user_info():
         print("Email is none")
         return redirect(url_for('main'))
 
-
+    # assign default values for users without first or last name
     if firstName is None and lastName is None:
-        full_name = f"{firstName or ' '} {lastName or ';)'}" #assign default values for users without first/last name
+        full_name = f"{firstName or ' '} {lastName or ';)'}"
     elif lastName:
 
         full_name = f"{firstName} {lastName}"
