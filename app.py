@@ -25,15 +25,6 @@ mydb = mysql.connector.connect(
 cursor = mydb.cursor()
 
 ######################################################################
-""" 
-The Google OAuth is currently connected to Joe's Google Cloud server for test purposes. 
-When the time comes, we will need to set up a group Google Cloud server and update the following:
-
-   - client_id
-   - client_secret
-   - /authGoogle/callback
-   
-"""
 
 #OAuth Setup
 oauth = OAuth(app)
