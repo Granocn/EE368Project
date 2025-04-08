@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from passVer import *
 from cookies import *
 import random
@@ -7,6 +7,7 @@ from authlib.integrations.flask_client import OAuth # pip install flask requests
 
 
 app = Flask(__name__)
+app.secret_key = "666666"
 
 # Initialize session and secret key
 init_app(app)
@@ -43,11 +44,11 @@ google = oauth.register(
 
 @app.route('/auth/google')
 def authGoogle():
-   return google.authorize_redirect(url_for('authorize', _external=True))
+   return google.authorize_redirect(url_for('authorizeGoogle', _external=True))
 
 
 @app.route('/authGoogle/callback')
-def authorize():
+def authorizeGoogle():
     token = google.authorize_access_token()
     resp = google.get('userinfo')
     user_info = resp.json()
@@ -101,13 +102,40 @@ def authorizeGit():
         session['first_name'] = user_info.get('login')
         session['last_name'] = user_info.get('name', 'No name available')
         session['email'] = email
-        session['bio'] = user_info.get('bio', 'No bio available')
 
         return redirect('/userInfo')
 
     except Exception as e:
         print(f"Error during GitHub authorization callback: {e}")  # Debugging
         return f"Error during GitHub authorization callback: {e}", 500
+
+
+custom_oauth_server = oauth.register(
+    name='custom',
+    client_id='client_123',
+    client_secret='VIOFTZSdlVr8wZlWnR3sMYKk6Ib1qAdoRfv4WNviwOZun1Ir',
+    access_token_url='http://127.0.0.1:5001/oauth/token',
+    authorize_url='http://127.0.0.1:5001/oauth/authorize',
+    api_base_url= 'http://127.0.0.1:5001/oauth/',
+    client_kwargs={'scope': 'profile'},
+)
+
+@app.route('/login/callback')
+def authorizeCustom():
+   token = custom_oauth_server.authorize_access_token() # ERROR
+   resp = custom_oauth_server.get('userinfo')
+   user_info = resp.json()
+
+
+   # Map the keys to what get_session() expects
+   session['first_name'] = user_info.get('name')
+   session['email'] = user_info.get('email')
+
+   return redirect('/userInfo')
+
+@app.route('/login')
+def loginCustom():
+   return custom_oauth_server.authorize_redirect(url_for('authorizeCustom', _external=True))
 
 ########################################################################
 
@@ -119,6 +147,8 @@ def main():
     email = user_data.get('email')
     if email is None:
         return render_template("main.html")
+    elif lastName is None:
+        return render_template("userInfo.html", userVar=firstName, userEmail=email)
     else:
         return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
 
@@ -140,7 +170,6 @@ def user_info():
     if firstName is None and lastName is None:
         full_name = f"{firstName or ' '} {lastName or ';)'}"
     elif lastName:
-
         full_name = f"{firstName} {lastName}"
     else:
         full_name = firstName
