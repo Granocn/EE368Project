@@ -134,17 +134,24 @@ def main():
 @app.route('/userInfo')
 def user_info():
     user_data = get_session()
+    if not user_data:  #debugging
+        print("No user data in session")
+        return redirect(url_for('main'))
     firstName = user_data.get('first_name')
     lastName = user_data.get('last_name')
     email = user_data.get('email')
     bio = user_data.get('bio')
     if email is None:
+        print("Email is none")
         return redirect(url_for('main'))
 
-    # combine first and last name
-    if lastName:
+
+    if firstName is None and lastName is None:
+        full_name = f"{firstName or ' '} {lastName or ';)'}" #assign default values for users without first/last name
+    elif lastName:
+
         full_name = f"{firstName} {lastName}"
-    else:  # if last_name is None, just use first_name
+    else:
         full_name = firstName
 
     return render_template("userInfo.html",
@@ -160,6 +167,12 @@ def post_main():
     email = user_data.get('email')
     if email is None:
         return redirect(url_for('main'))
+
+    # Ensure neither firstName nor lastName is None
+    if firstName is None or lastName is None:
+        firstName = firstName or ' '
+        lastName = lastName or ';)'
+
     return render_template("postMain.html", userVar=firstName + " " + lastName)
 
 @app.route('/logout')
