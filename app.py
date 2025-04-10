@@ -3,8 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from passVer import *
 from cookies import *
 import random
-from authlib.integrations.flask_client import OAuth # pip install flask requests authlib
-
+from authlib.integrations.flask_client import OAuth  # pip install flask requests authlib
 
 app = Flask(__name__)
 app.secret_key = "666666"
@@ -14,7 +13,7 @@ init_app(app)
 Session(app)
 
 # Debugging check
-#print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
+# print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
 
 mydb = mysql.connector.connect(
     host="54.172.50.181",
@@ -27,24 +26,25 @@ cursor = mydb.cursor()
 
 ######################################################################
 
-#OAuth Setup
+# OAuth Setup
 oauth = OAuth(app)
 google = oauth.register(
-   name='google',
-   client_id='589973263454-m0qhjjp5qkom24okc1s3ghfghuu8uefg.apps.googleusercontent.com',
-   client_secret='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',
-   access_token_url='https://oauth2.googleapis.com/token',
-   access_token_params=None,
-   authorize_url='https://accounts.google.com/o/oauth2/auth',
-   authorize_params=None,
-   api_base_url='https://www.googleapis.com/oauth2/v2/',
-   client_kwargs={'scope': 'openid email profile'},
-   server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    name='google',
+    client_id='589973263454-m0qhjjp5qkom24okc1s3ghfghuu8uefg.apps.googleusercontent.com',
+    client_secret='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',
+    access_token_url='https://oauth2.googleapis.com/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v2/',
+    client_kwargs={'scope': 'openid email profile'},
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
 )
+
 
 @app.route('/auth/google')
 def authGoogle():
-   return google.authorize_redirect(url_for('authorizeGoogle', _external=True))
+    return google.authorize_redirect(url_for('authorizeGoogle', _external=True))
 
 
 @app.route('/authGoogle/callback')
@@ -63,23 +63,25 @@ def authorizeGoogle():
     return redirect('/userInfo')
 
 
-#Github OAuth
+# Github OAuth
 github = oauth.register(
-   name='github',
-   client_id='Ov23likj13chtyyolFYf',
-   client_secret='66d88938f145c9344ab90601269db1a09baf98a1',
-   access_token_url='https://github.com/login/oauth/access_token',
-   access_token_params=None,
-   authorize_url='https://github.com/login/oauth/authorize',
-   authorize_params=None,
-   api_base_url='https://api.github.com/',
-   client_kwargs={'scope': 'read:user user:email'},
+    name='github',
+    client_id='Ov23likj13chtyyolFYf',
+    client_secret='66d88938f145c9344ab90601269db1a09baf98a1',
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_params=None,
+    authorize_url='https://github.com/login/oauth/authorize',
+    authorize_params=None,
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'read:user user:email'},
 
 )
 
+
 @app.route('/auth/github')
 def authGithub():
-   return github.authorize_redirect(url_for('authorizeGit', _external=True))
+    return github.authorize_redirect(url_for('authorizeGit', _external=True))
+
 
 @app.route('/authgithub/callback')
 def authorizeGit():
@@ -116,26 +118,26 @@ custom_oauth_server = oauth.register(
     client_secret='VIOFTZSdlVr8wZlWnR3sMYKk6Ib1qAdoRfv4WNviwOZun1Ir',
     access_token_url='http://127.0.0.1:5001/oauth/token',
     authorize_url='http://127.0.0.1:5001/oauth/authorize',
-    api_base_url= 'http://127.0.0.1:5001/oauth/',
+    api_base_url='http://127.0.0.1:5001/oauth/',
     client_kwargs={'scope': 'profile'},
 )
 
+
 @app.route('/login/callback')
 def authorizeCustom():
-   token = custom_oauth_server.authorize_access_token() # ERROR
-   resp = custom_oauth_server.get('userinfo')
-   if resp == 'deny':
-       return redirect('/main')
-   else:
-       user_info = resp.json()
-       # Map the keys to what get_session() expects
-       session['first_name'] = user_info.get('name')
-       session['email'] = user_info.get('email')
-       return redirect('/userInfo')
+    token = custom_oauth_server.authorize_access_token()  # ERROR
+    resp = custom_oauth_server.get('userinfo')
+    user_info = resp.json()
+    # Map the keys to what get_session() expects
+    session['first_name'] = user_info.get('name')
+    session['email'] = user_info.get('email')
+    return redirect('/userInfo')
+
 
 @app.route('/login')
 def loginCustom():
-   return custom_oauth_server.authorize_redirect(url_for('authorizeCustom', _external=True))
+    return custom_oauth_server.authorize_redirect(url_for('authorizeCustom', _external=True))
+
 
 ########################################################################
 
@@ -151,6 +153,7 @@ def main():
         return render_template("userInfo.html", userVar=firstName, userEmail=email)
     else:
         return render_template("userInfo.html", userVar=firstName + " " + lastName, userEmail=email)
+
 
 @app.route('/userInfo')
 def user_info():
@@ -179,6 +182,7 @@ def user_info():
                            userEmail=email,
                            userBio=bio)
 
+
 @app.route('/postMain')
 def post_main():
     user_data = get_session()
@@ -194,8 +198,8 @@ def post_main():
     elif lastName is None:
         return render_template("postMain.html", userVar=firstName)
 
-
     return render_template("postMain.html", userVar=firstName + " " + lastName)
+
 
 @app.route('/logout')
 def logout():
@@ -203,13 +207,14 @@ def logout():
     session.pop('user', None)
     return redirect('/')
 
+
 @app.route('/', methods=["GET", "POST"])
 def button():
-    global token        # Access token for various verifications
-    global email        # User email
-    global firstName    # User first name
-    global lastName     # User last name
-    global password     # User password
+    global token  # Access token for various verifications
+    global email  # User email
+    global firstName  # User first name
+    global lastName  # User last name
+    global password  # User password
     global forgotFlag
 
     if request.method == "POST":
@@ -268,11 +273,13 @@ def button():
                             token = str(random.randint(100000, 999999))
 
                             # Make the email message
-                            emailMess = ("To complete your registration for your EE368Project account please use the following verification code.\n\n"
-                                         "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, please ignore this.")
+                            emailMess = (
+                                            "To complete your registration for your EE368Project account please use the following verification code.\n\n"
+                                            "Verification Code: ") + token + (
+                                            "\n\n\nIf you are not trying to register this email address, please ignore this.")
 
                             # Send the email
-                            SendEmail(email, emailMess, "Email Verification - ["+token+"]")
+                            SendEmail(email, emailMess, "Email Verification - [" + token + "]")
 
                             # Set the forgot flag to false - lets the application know what the token's purpose is
                             forgotFlag = False
@@ -306,7 +313,8 @@ def button():
             email = request.form['email']
             checkEmail = ""
             checkPassword = ""
-            cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s", (email, password))
+            cursor.execute("SELECT FirstName, Password, Email, LastName FROM Users WHERE Email = %s AND Password = %s",
+                           (email, password))
             for (FirstName, Password, Email, LastName) in cursor:
                 firstName = FirstName
                 checkEmail = Email
@@ -350,10 +358,12 @@ def button():
                     # Get a random token
                     token = str(random.randint(100000, 999999))
                     # Make the email message
-                    emailMess = ("To complete your registration for your EE368Project account please use the following verification code.\n\n"
-                                 "Verification Code: ") + token + ("\n\n\nIf you are not trying to register this email address, please ignore this.")
+                    emailMess = (
+                                    "To complete your registration for your EE368Project account please use the following verification code.\n\n"
+                                    "Verification Code: ") + token + (
+                                    "\n\n\nIf you are not trying to register this email address, please ignore this.")
                     # Send the email
-                    SendEmail(email, emailMess, "Email Verification - ["+token+"]")
+                    SendEmail(email, emailMess, "Email Verification - [" + token + "]")
                     return render_template('emailVer.html',
                                            header='A new verification code has been sent to ' + email,
                                            incorrect='Error : Email Verification Failed!')
@@ -376,9 +386,10 @@ def button():
                     # Make the email message
                     emailMess = ("We've received a request to reset your password for your EE368Project account.\n\n"
                                  "Please use the following one-time verification code to reset your password.\n\n"
-                                 "Verification Code: ") + token + ("\n\n\nIf you are not trying to reset your password, please ignore this email.")
+                                 "Verification Code: ") + token + (
+                                    "\n\n\nIf you are not trying to reset your password, please ignore this email.")
                     # Send the email
-                    SendEmail(email, emailMess, "Forgotten Password - ["+token+"]")
+                    SendEmail(email, emailMess, "Forgotten Password - [" + token + "]")
                     # Set the forgot flag to true - lets the application know what the token's purpose is
                     forgotFlag = True
                     return render_template('emailVer.html',
@@ -412,6 +423,7 @@ def button():
                 return render_template('resetPassword.html',
                                        incorrect="Error : Passwords must match!")
     return redirect(url_for('button'))
+
 
 if __name__ == '__main__':
     app.run()
