@@ -9,7 +9,7 @@ from flask_session import Session
 def init_app(app):
     app.config['SESSION_TYPE'] = 'filesystem'  # Store sessions on the server
     app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_key')
-    app.permanent_session_lifetime = timedelta(minutes=1)
+    app.permanent_session_lifetime = timedelta(minutes=60)
 
 def set_session(email, first_name, last_name):
     """Sets session data for the user."""
