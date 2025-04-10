@@ -168,11 +168,11 @@ def user_info():
 
     # assign default values for users without first or last name
     if firstName is None and lastName is None:
-        full_name = f"{firstName or ' '} {lastName or ';)'}"
-    elif lastName:
-        full_name = f"{firstName} {lastName}"
-    else:
+        full_name = "User"
+    elif lastName is None:
         full_name = firstName
+    else:
+        full_name = f"{firstName} {lastName}"
 
     return render_template("userInfo.html",
                            userVar=full_name,
@@ -189,9 +189,11 @@ def post_main():
         return redirect(url_for('main'))
 
     # Ensure neither firstName nor lastName is None
-    if firstName is None or lastName is None:
-        firstName = firstName or ' '
-        lastName = lastName or ';)'
+    if firstName is None:
+        return render_template("postMain.html", userVar="User")
+    elif lastName is None:
+        return render_template("postMain.html", userVar=firstName)
+
 
     return render_template("postMain.html", userVar=firstName + " " + lastName)
 
