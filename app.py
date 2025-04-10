@@ -124,14 +124,14 @@ custom_oauth_server = oauth.register(
 def authorizeCustom():
    token = custom_oauth_server.authorize_access_token() # ERROR
    resp = custom_oauth_server.get('userinfo')
-   user_info = resp.json()
-
-
-   # Map the keys to what get_session() expects
-   session['first_name'] = user_info.get('name')
-   session['email'] = user_info.get('email')
-
-   return redirect('/userInfo')
+   if resp == 'deny':
+       return redirect('/main')
+   else:
+       user_info = resp.json()
+       # Map the keys to what get_session() expects
+       session['first_name'] = user_info.get('name')
+       session['email'] = user_info.get('email')
+       return redirect('/userInfo')
 
 @app.route('/login')
 def loginCustom():
