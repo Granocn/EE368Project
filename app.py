@@ -102,8 +102,11 @@ def authorizeGit():
         print(f"Email: {email}")  # log the email
 
         # Store relevant user info in the session
-        session['first_name'] = user_info.get('login')
-        session['last_name'] = user_info.get('name', 'No name available')
+        first_name = user_info.get('name')
+        if first_name is None:
+            session['first_name'] = user_info.get('login')
+        else:
+            session['first_name'] = user_info.get('name')
         session['email'] = email
 
         return redirect('/userInfo')
