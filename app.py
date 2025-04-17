@@ -3,10 +3,11 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from passVer import *
 from cookies import *
 import random
+import os
 from authlib.integrations.flask_client import OAuth  # pip install flask requests authlib
 
 app = Flask(__name__)
-app.secret_key = "666666"
+app.secret_key = os.getenv("SECRET_KEY")
 
 # Initialize session and secret key
 init_app(app)
@@ -125,12 +126,16 @@ custom_oauth_server = oauth.register(
 
 @app.route('/login/callback')
 def authorizeCustom():
-    token = custom_oauth_server.authorize_access_token()  # ERROR
+
+    token = custom_oauth_server.authorize_access_token()
     resp = custom_oauth_server.get('userinfo')
     user_info = resp.json()
+
     # Map the keys to what get_session() expects
     session['first_name'] = user_info.get('name')
     session['email'] = user_info.get('email')
+
+
     return redirect('/userInfo')
 
 
