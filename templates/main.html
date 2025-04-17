@@ -17,6 +17,7 @@
 </head>
 <body>
 
+
   <!-- Navbar with User Info button -->
   <div class="w3-top">
     <div class="w3-bar w3-red w3-card">
@@ -24,6 +25,28 @@
       <a href="/" class="w3-bar-item w3-button w3-large">EE368 Project</a>
     </div>
   </div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="w3-container w3-padding">
+      <div class="w3-panel w3-pale-yellow w3-border">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+  {% if error %}
+  <div class="w3-container w3-padding">
+    <div class="w3-panel w3-pale-red w3-border">
+      <p>{{ error }}</p>
+    </div>
+  </div>
+{% endif %}
+
 
   <!-- Header with Log in and Sign up buttons -->
   <header class="w3-container w3-red w3-center header-custom" style="padding:128px 16px;">

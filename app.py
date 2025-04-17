@@ -1,10 +1,12 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from passVer import *
 from cookies import *
 import random
 import os
 from authlib.integrations.flask_client import OAuth  # pip install flask requests authlib
+from dotenv import load_dotenv
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
@@ -13,8 +15,6 @@ app.secret_key = os.getenv("SECRET_KEY")
 init_app(app)
 Session(app)
 
-# Debugging check
-# print("Current SECRET_KEY:", app.secret_key)  # Ensure it's not None
 
 mydb = mysql.connector.connect(
     host="54.172.50.181",
@@ -151,10 +151,18 @@ def loginCustom():
 
 @app.route('/')
 def main():
-    user_data = get_session()
-    firstName = user_data.get('first_name')
-    lastName = user_data.get('last_name')
-    email = user_data.get('email')
+    user_data = session.get('user_data')
+
+    if user_data is None:
+        # Handle the case where there is no user data
+        firstName = None
+        lastName = None
+        email = None
+    else:
+        firstName = user_data.get('first_name')
+        lastName = user_data.get('last_name')
+        email = user_data.get('email')
+
     if email is None:
         return render_template("main.html")
     elif lastName is None:
@@ -168,7 +176,7 @@ def user_info():
     user_data = get_session()
     if not user_data:
         print("No user data in session")
-        return redirect(url_for('main'))
+        return render_template("sessionExpired.html")
     firstName = user_data.get('first_name')
     lastName = user_data.get('last_name')
     email = user_data.get('email')
@@ -213,7 +221,6 @@ def post_main():
 def logout():
     clear_session()
     session.pop('user', None)
-    return redirect('/')
 
 
 @app.route('/', methods=["GET", "POST"])

@@ -9,7 +9,7 @@ from flask_session import Session
 def init_app(app):
     app.config['SESSION_TYPE'] = 'filesystem'  # Store sessions on the server
     app.secret_key = os.getenv('SECRET_KEY', 'fallback_secret_key')
-    app.permanent_session_lifetime = timedelta(minutes=60)
+    app.permanent_session_lifetime = timedelta(minutes=1)
 
 def set_session(email, first_name, last_name):
     """Sets session data for the user."""
@@ -18,13 +18,17 @@ def set_session(email, first_name, last_name):
     session['first_name'] = first_name
     session['last_name'] = last_name
 
+
 def get_session():
     """Gets session data for the user."""
+    email = session.get('email')
     user_data = {
-        'email': session.get('email'),
+        'email': email,
         'first_name': session.get('first_name'),
         'last_name': session.get('last_name')
     }
+    if not email:
+        return None  # No valid session
     return user_data
 
 def clear_session():
