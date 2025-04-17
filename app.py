@@ -126,6 +126,7 @@ custom_oauth_server = oauth.register(
 
 @app.route('/login/callback')
 def authorizeCustom():
+
     token = custom_oauth_server.authorize_access_token()
     resp = custom_oauth_server.get('userinfo')
     user_info = resp.json()
@@ -133,6 +134,7 @@ def authorizeCustom():
     # Map the keys to what get_session() expects
     session['first_name'] = user_info.get('name')
     session['email'] = user_info.get('email')
+
 
     return redirect('/userInfo')
 
