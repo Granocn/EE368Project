@@ -58,6 +58,7 @@ def authorizeGoogle():
     session['first_name'] = user_info.get('given_name')
     session['last_name'] = user_info.get('family_name')
     session['email'] = user_info.get('email')
+    session['profile_pic'] = user_info.get('picture')
 
     # Optionally, can also store the whole user_info if needed
     session['user'] = user_info
@@ -108,6 +109,8 @@ def authorizeGit():
         else:
             session['first_name'] = user_info.get('name')
         session['email'] = email
+
+        session['profile_pic'] = user_info.get('avatar_url')
 
         return redirect('/userInfo')
 
@@ -181,6 +184,7 @@ def user_info():
     lastName = user_data.get('last_name')
     email = user_data.get('email')
     bio = user_data.get('bio')
+    profile_pic = session.get('profile_pic')
     if email is None:
         print("Email is none")
         return redirect(url_for('main'))
@@ -196,12 +200,15 @@ def user_info():
     return render_template("userInfo.html",
                            userVar=full_name,
                            userEmail=email,
-                           userBio=bio)
+                           userBio=bio,
+                           profilePic=profile_pic)
 
 
 @app.route('/postMain')
 def post_main():
     user_data = get_session()
+    if not user_data:
+        return render_template("sessionExpired.html")
     firstName = user_data.get('first_name')
     lastName = user_data.get('last_name')
     email = user_data.get('email')

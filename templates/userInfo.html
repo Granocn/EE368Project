@@ -16,8 +16,6 @@
 </head>
 <body>
 
-
-
   <!-- Navbar -->
   <div class="navbar">
     <!-- Changed the home link to point to postMain -->
@@ -31,9 +29,15 @@
     <div class="w3-card-4 w3-red w3-padding-large w3-round outer-card" style="max-width: 700px; margin-top: -150px;">
       <!-- Inner User Info Card -->
       <div class="w3-card-4 w3-light-grey w3-text-red login-form" style="padding: 30px;">
-        <!-- Account Icon -->
+        <!-- Get Profile Picture or Set Default Icon -->
         <div class="w3-center">
-          <i class="fa fa-user-circle-o w3-text-red" style="font-size: 110px;"></i>
+          {% if profilePic %}
+        <img src="{{ profilePic }}" alt="Profile Picture"
+         class="w3-circle w3-margin-top"
+         style="width:110px; height:110px; object-fit:cover;">
+        {% else %}
+        <i class="fa fa-user-circle-o w3-text-red" style="font-size: 110px;"></i>
+          {% endif %}
         </div>
 
         <!-- User Details -->
