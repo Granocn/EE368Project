@@ -221,6 +221,7 @@ def post_main():
 def logout():
     clear_session()
     session.pop('user', None)
+    return redirect(url_for('main'))
 
 
 @app.route('/', methods=["GET", "POST"])
