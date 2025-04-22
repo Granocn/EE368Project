@@ -1,12 +1,13 @@
 /* Global body styling */
 html, body {
     height: 100%; /* Full height of the viewport */
-    margin: 0; /* Remove default margin */
+    margin: 0; 
     display: flex; /* Use flexbox for layout */
     flex-direction: column; /* Stack elements vertically */
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: white;
     color: #000;
+    overflow-y: auto; 
 }
 
 /* Fix for Content Overlap */
@@ -24,18 +25,18 @@ html, body {
 
 /* Outer card adjustments */
 .outer-card {
-    max-width: 700px; /* Larger max width for a bigger card */
-    background-color: #f44336; /* Red background for depth and contrast */
-    padding: 30px; /* Increase padding for more spacing */
-    border-radius: 8px; /* Rounded corners for a modern look */
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); /* More pronounced shadow for depth */
+    max-width: 700px; 
+    background-color: #f44336; 
+    padding: 30px; 
+    border-radius: 8px; 
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); 
 }
 
 /* Fix for Navbar */
 .navbar {
     position: relative; /* Ensure it positions correctly */
     z-index: 10; /* Bring navbar above any overlapping elements */
-    background-color: #f44336; /* Existing background color */
+    background-color: #f44336; 
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
