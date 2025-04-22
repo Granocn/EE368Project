@@ -34,8 +34,3 @@ def get_session():
 def clear_session():
     """Clears session data for the user."""
     session.clear()
-
-def is_logged_in():
-    """Checks if a user is logged in."""
-    return 'username' in session
-

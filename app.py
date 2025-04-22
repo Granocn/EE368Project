@@ -50,19 +50,25 @@ def authGoogle():
 
 @app.route('/authGoogle/callback')
 def authorizeGoogle():
-    token = google.authorize_access_token()
-    resp = google.get('userinfo')
-    user_info = resp.json()
+    try:
+        token = google.authorize_access_token()
+        resp = google.get('userinfo')
+        user_info = resp.json()
 
-    # Map the keys to what get_session() expects
-    session['first_name'] = user_info.get('given_name')
-    session['last_name'] = user_info.get('family_name')
-    session['email'] = user_info.get('email')
-    session['profile_pic'] = user_info.get('picture')
+        # Map the keys to what get_session() expects
+        session['first_name'] = user_info.get('given_name')
+        session['last_name'] = user_info.get('family_name')
+        session['email'] = user_info.get('email')
+        session['profile_pic'] = user_info.get('picture')
 
-    # Optionally, can also store the whole user_info if needed
-    session['user'] = user_info
-    return redirect('/userInfo')
+        # Optionally, can also store the whole user_info if needed
+        session['user'] = user_info
+        return redirect('/userInfo')
+
+    except Exception as e:
+        print(f"Error during Google authorization callback: {e}")  # Debugging
+        return f"Error during Google authorization callback: {e}", 500
+
 
 
 # Github OAuth
@@ -88,6 +94,8 @@ def authGithub():
 @app.route('/authgithub/callback')
 def authorizeGit():
     try:
+        #raise Exception("Simulated GitHub error")  # <--- force error
+
         token = github.authorize_access_token()
         resp = github.get('user')
         user_info = resp.json()
@@ -133,16 +141,20 @@ custom_oauth_server = oauth.register(
 @app.route('/login/callback')
 def authorizeCustom():
 
-    token = custom_oauth_server.authorize_access_token()
-    resp = custom_oauth_server.get('userinfo')
-    user_info = resp.json()
+    try:
+        token = custom_oauth_server.authorize_access_token()
+        resp = custom_oauth_server.get('userinfo')
+        user_info = resp.json()
 
-    # Map the keys to what get_session() expects
-    session['first_name'] = user_info.get('name')
-    session['email'] = user_info.get('email')
+        # Map the keys to what get_session() expects
+        session['first_name'] = user_info.get('name')
+        session['email'] = user_info.get('email')
 
+        return redirect('/userInfo')
+    except Exception as e:
+        print(f"Error during Custom OAuth authorization callback: {e}")  # Debugging
+        return f"Error during Custom OAuth authorization callback: {e}", 500
 
-    return redirect('/userInfo')
 
 
 @app.route('/login')
