@@ -162,7 +162,7 @@ def loginCustom():
     return custom_oauth_server.authorize_redirect(url_for('authorizeCustom', _external=True))
 
 
-########################################################################
+#######################################################################
 
 @app.route('/')
 def main():
@@ -251,6 +251,7 @@ def button():
     global lastName  # User last name
     global password  # User password
     global forgotFlag
+    global incorrect
 
     if request.method == "POST":
 
